@@ -57,11 +57,13 @@ function App() {
 
   const downloadJson = () => {
     if (selectedWorkflow) {
+      const jsonString = JSON.stringify(JSON.parse(selectedWorkflow.json), null, 2);
       const element = document.createElement('a');
-      const file = new Blob([selectedWorkflow.json], { type: 'application/json' });
+      const file = new Blob([jsonString], {
+        type: 'application/json'
+      });
       element.href = URL.createObjectURL(file);
       element.download = `${selectedWorkflow.nombre}.json`;
-      element.style.display = 'none';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
