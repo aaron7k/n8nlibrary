@@ -205,7 +205,7 @@ function App() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{workflow.nombre}</h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{workflow.descripcion}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center">
+                    <div className="flex items-center relative">
                       <label htmlFor={`fairPrice-${key}`} className="mr-2 text-sm text-gray-700">
                         Precio Justo:
                       </label>
@@ -218,23 +218,25 @@ function App() {
                         placeholder="0"
                       />
                       <span
-                        className="ml-1 relative cursor-pointer"
+                        className="ml-1 cursor-pointer"
                         onMouseEnter={handleTooltipMouseEnter}
                         onMouseLeave={handleTooltipMouseLeave}
                       >
                         <Info size={16} className="inline-block align-text-top" />
+                        {showTooltip && (
+                          <div
+                            className="absolute bg-gray-800 text-white text-sm rounded-md p-2 z-10"
+                            style={{
+                              top: '100%',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              marginTop: '5px',
+                            }}
+                          >
+                            Si bien puedes descargar el flujo gratis, te invitamos a colocar un precio justo por el valor del workflow.
+                          </div>
+                        )}
                       </span>
-                      {showTooltip && (
-                        <div
-                          className="absolute bg-gray-800 text-white text-sm rounded-md p-2 z-10"
-                          style={{
-                            top: tooltipPosition.top + 10,
-                            left: tooltipPosition.left + 10,
-                          }}
-                        >
-                          Si bien puedes descargar el flujo gratis, te invitamos a colocar un precio justo por el valor del workflow.
-                        </div>
-                      )}
                     </div>
                     <button
                       onClick={() => handleDownloadOrPurchase(workflow)}
