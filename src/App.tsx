@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { Download, Copy, Link, X, Play } from 'lucide-react';
-import type { Workflow } from './types';
+import { Workflow } from './types';
 
 Modal.setAppElement('#root');
 
