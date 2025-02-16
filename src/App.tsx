@@ -45,13 +45,13 @@ function App() {
 
   const copyJson = () => {
     if (selectedWorkflow) {
-      const textField = document.createElement('textarea');
-      textField.innerText = selectedWorkflow.json;
-      document.body.appendChild(textField);
-      textField.select();
-      document.execCommand('copy');
-      textField.remove();
-      alert('JSON copied to clipboard!');
+      try {
+        navigator.clipboard.writeText(selectedWorkflow.json);
+        alert('JSON copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy JSON to clipboard: ' + err);
+      }
     }
   };
 
@@ -61,7 +61,7 @@ function App() {
       const file = new Blob([selectedWorkflow.json], { type: 'application/json' });
       element.href = URL.createObjectURL(file);
       element.download = `${selectedWorkflow.nombre}.json`;
-      element.style.display = 'none'; // Hide the element
+      element.style.display = 'none';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -70,13 +70,13 @@ function App() {
 
   const copyUrl = () => {
     if (selectedWorkflow) {
-      const textField = document.createElement('textarea');
-      textField.innerText = selectedWorkflow.url;
-      document.body.appendChild(textField);
-      textField.select();
-      document.execCommand('copy');
-      textField.remove();
-      alert('URL copied to clipboard!');
+      try {
+        navigator.clipboard.writeText(selectedWorkflow.url);
+        alert('URL copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy URL to clipboard: ' + err);
+      }
     }
   };
 
