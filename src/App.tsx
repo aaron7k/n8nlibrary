@@ -57,11 +57,8 @@ function App() {
 
   const downloadJson = () => {
     if (selectedWorkflow) {
-      const jsonString = JSON.stringify(JSON.parse(selectedWorkflow.json), null, 2);
       const element = document.createElement('a');
-      const file = new Blob([jsonString], {
-        type: 'application/json'
-      });
+      const file = new Blob([selectedWorkflow.json], { type: 'application/json' });
       element.href = URL.createObjectURL(file);
       element.download = `${selectedWorkflow.nombre}.json`;
       document.body.appendChild(element);
@@ -172,17 +169,13 @@ function App() {
             </button>
           </div>
 
-          <div className="mb-6">
-            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-              <iframe
-                src={selectedWorkflow?.loom}
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                frameBorder="0"
-                webkitallowfullscreen="true"
-                mozallowfullscreen="true"
-                allowFullScreen
-              ></iframe>
-            </div>
+          <div className="aspect-video w-full mb-6">
+            <iframe
+              src={selectedWorkflow?.loom}
+              frameBorder="0"
+              allowFullScreen
+              className="w-full h-full rounded-lg"
+            ></iframe>
           </div>
 
           <div className="grid grid-cols-3 gap-4">

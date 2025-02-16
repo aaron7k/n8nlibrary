@@ -4,10 +4,6 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.bg-gray-800 {
-    background-color: #2d3748;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Adjust minmax value as needed */
+  gap: 1.5rem; /* Keep the gap consistent */
 }
