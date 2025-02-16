@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { Download, Copy, Link, X, Play } from 'lucide-react';
+import { Download, Copy, Link, X } from 'lucide-react';
 import { Workflow } from './types';
 
 Modal.setAppElement('#root');
@@ -134,15 +134,6 @@ function App() {
                 >
                   Descargar
                 </button>
-                <a
-                  href={workflow.loom}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
-                >
-                  <Play size={20} />
-                  Ver Tutorial
-                </a>
               </div>
             </div>
           ))}
@@ -167,15 +158,6 @@ function App() {
             >
               <X size={24} />
             </button>
-          </div>
-
-          <div className="aspect-video w-full mb-6">
-            <iframe
-              src={selectedWorkflow?.loom}
-              frameBorder="0"
-              allowFullScreen
-              className="w-full h-full rounded-lg"
-            ></iframe>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
