@@ -1,0 +1,9 @@
+[build]
+  functions = ".netlify/functions"
+
+[dev]
+  functionsPort = 8888
+  command = "npm run dev"
+
+[functions]
+  included_files = ["node_modules/stripe/*"]
