@@ -15,6 +15,7 @@ function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tooltipText, setTooltipText] = useState<string | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWorkflows = async () => {
@@ -82,19 +83,19 @@ function App() {
     }
   };
 
-  const handleMouseEnter = (description: string) => {
-    setTooltipText(description);
-  };
-
-  const handleMouseLeave = () => {
-    setTooltipText(null);
-  };
-
   const getShortenedDescription = (description: string) => {
     if (description.length > DESCRIPTION_LIMIT) {
       return description.substring(0, DESCRIPTION_LIMIT) + '...';
     }
     return description;
+  };
+
+  const handleImageClick = (imageSrc: string) => {
+    setZoomedImage(imageSrc);
+  };
+
+  const closeZoomedImage = () => {
+    setZoomedImage(null);
   };
 
   return (
@@ -112,22 +113,17 @@ function App() {
               key={workflow.nombre + workflow.fecha}
               className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]"
             >
-              <div className="aspect-video w-full overflow-hidden">
+              <div className="aspect-video w-full overflow-hidden cursor-pointer" onClick={() => handleImageClick(workflow.imagen)}>
                 <img
                   src={workflow.imagen}
                   alt={workflow.nombre}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                 />
               </div>
               <div className="p-6 flex flex-col justify-between" style={{ minHeight: '220px' }}>
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{workflow.nombre}</h3>
-                  <p
-                    className="text-gray-600 mb-4"
-                    title={tooltipText === workflow.descripcion ? tooltipText : ''}
-                    onMouseEnter={() => handleMouseEnter(workflow.descripcion)}
-                    onMouseLeave={handleMouseLeave}
-                  >
+                  <p className="text-gray-600 mb-4 line-clamp-3" title={workflow.descripcion}>
                     {getShortenedDescription(workflow.descripcion)}
                   </p>
                 </div>
@@ -199,6 +195,11 @@ function App() {
           </div>
         </div>
       </Modal>
+      {zoomedImage && (
+        <div className="fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={closeZoomedImage}>
+          <img src={zoomedImage} alt="Zoomed Image" className="max-w-4xl max-h-4xl object-contain cursor-pointer" />
+        </div>
+      )}
     </div>
   );
 }
