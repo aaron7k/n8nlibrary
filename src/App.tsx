@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { Download, Copy, Link, X } from 'lucide-react';
+import { Download, Copy, Link, X, Play } from 'lucide-react';
 import { Workflow } from './types';
 
 Modal.setAppElement('#root');
+
+const DESCRIPTION_LIMIT = 100;
 
 function App() {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
@@ -12,6 +14,7 @@ function App() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tooltipText, setTooltipText] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWorkflows = async () => {
@@ -79,29 +82,20 @@ function App() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+  const handleMouseEnter = (description: string) => {
+    setTooltipText(description);
+  };
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-md text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const handleMouseLeave = () => {
+    setTooltipText(null);
+  };
+
+  const getShortenedDescription = (description: string) => {
+    if (description.length > DESCRIPTION_LIMIT) {
+      return description.substring(0, DESCRIPTION_LIMIT) + '...';
+    }
+    return description;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -125,15 +119,35 @@ function App() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="p-6 flex flex-col">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{workflow.nombre}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{workflow.descripcion}</p>
-                <button
-                  onClick={() => handleWorkflowClick(workflow)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors mb-2"
-                >
-                  Descargar
-                </button>
+              <div className="p-6 flex flex-col justify-between" style={{ minHeight: '220px' }}>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{workflow.nombre}</h3>
+                  <p
+                    className="text-gray-600 mb-4"
+                    title={tooltipText === workflow.descripcion ? tooltipText : ''}
+                    onMouseEnter={() => handleMouseEnter(workflow.descripcion)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    {getShortenedDescription(workflow.descripcion)}
+                  </p>
+                </div>
+                <div className="flex flex-col items-stretch">
+                  <button
+                    onClick={() => handleWorkflowClick(workflow)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors mb-2"
+                  >
+                    Descargar
+                  </button>
+                  <a
+                    href={workflow.loom}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
+                  >
+                    <Play size={20} />
+                    {workflow.loom ? 'Ver Tutorial' : 'Tutorial Pendiente'}
+                  </a>
+                </div>
               </div>
             </div>
           ))}
