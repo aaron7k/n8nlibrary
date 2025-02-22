@@ -8,19 +8,24 @@ Modal.setAppElement('#root');
 
 const DESCRIPTION_LIMIT = 100;
 
-function App() {
+type LibraryType = 'n8n' | 'flowise';
+
+export default function App() {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [tooltipText, setTooltipText] = useState<string | null>(null);
+  const [activeLibrary, setActiveLibrary] = useState<LibraryType>('n8n');
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWorkflows = async () => {
+      setLoading(true);
       try {
-        const response = await axios.post('https://flows.axelriveroc.com/webhook/n8nlibrary/get');
+        const response = await axios.post('https://flows.axelriveroc.com/webhook/n8nlibrary/get', {
+          type: activeLibrary
+        });
         if (response.data && Array.isArray(response.data.data)) {
           setWorkflows(response.data.data);
         } else {
@@ -35,7 +40,7 @@ function App() {
     };
 
     fetchWorkflows();
-  }, []);
+  }, [activeLibrary]);
 
   const handleWorkflowClick = (workflow: Workflow) => {
     setSelectedWorkflow(workflow);
@@ -48,7 +53,7 @@ function App() {
   };
 
   const copyJson = () => {
-    if (selectedWorkflow) {
+    if (selectedWorkflow && activeLibrary === 'n8n') {
       const textField = document.createElement('textarea');
       textField.innerText = selectedWorkflow.json;
       document.body.appendChild(textField);
@@ -72,7 +77,7 @@ function App() {
   };
 
   const copyUrl = () => {
-    if (selectedWorkflow) {
+    if (selectedWorkflow && activeLibrary === 'n8n') {
       const textField = document.createElement('textarea');
       textField.innerText = selectedWorkflow.url;
       document.body.appendChild(textField);
@@ -98,11 +103,57 @@ function App() {
     setZoomedImage(null);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex justify-center">
-          <h1 className="text-3xl font-bold text-gray-900">Infragrowth Library</h1>
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">Infragrowth Library</h1>
+          <div className="flex justify-center space-x-4">
+            <button
+              className={`px-4 py-2 rounded-md transition-colors ${
+                activeLibrary === 'n8n'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+              onClick={() => setActiveLibrary('n8n')}
+            >
+              n8n Templates
+            </button>
+            <button
+              className={`px-4 py-2 rounded-md transition-colors ${
+                activeLibrary === 'flowise'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+              onClick={() => setActiveLibrary('flowise')}
+            >
+              Flowise Templates
+            </button>
+          </div>
         </div>
       </header>
 
@@ -170,31 +221,44 @@ function App() {
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <button
-              onClick={copyJson}
-              className="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
-            >
-              <Copy size={20} />
-              Copiar JSON
-            </button>
-            <button
-              onClick={downloadJson}
-              className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-            >
-              <Download size={20} />
-              Descargar JSON
-            </button>
-            <button
-              onClick={copyUrl}
-              className="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
-            >
-              <Link size={20} />
-              Copiar URL
-            </button>
+          <div className={`grid gap-4 ${activeLibrary === 'n8n' ? 'grid-cols-3' : 'grid-cols-1'}`}>
+            {activeLibrary === 'n8n' ? (
+              <>
+                <button
+                  onClick={copyJson}
+                  className="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  <Copy size={20} />
+                  Copiar JSON
+                </button>
+                <button
+                  onClick={downloadJson}
+                  className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  <Download size={20} />
+                  Descargar JSON
+                </button>
+                <button
+                  onClick={copyUrl}
+                  className="flex items-center justify-center gap-2 bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  <Link size={20} />
+                  Copiar URL
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={downloadJson}
+                className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <Download size={20} />
+                Descargar Archivo
+              </button>
+            )}
           </div>
         </div>
       </Modal>
+
       {zoomedImage && (
         <div className="fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={closeZoomedImage}>
           <img src={zoomedImage} alt="Zoomed Image" className="max-w-4xl max-h-4xl object-contain cursor-pointer" />
@@ -203,5 +267,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

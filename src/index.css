@@ -4,13 +4,22 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Adjust minmax value as needed */
-  gap: 1.5rem; /* Keep the gap consistent */
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
 }
 
-/* Fix for cards overlapping in responsive view */
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: 1fr; /* Single column for smaller screens */
+    grid-template-columns: 1fr;
   }
+}
+
+.modal-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.modal-buttons.flowise {
+  grid-template-columns: 1fr;
 }
