@@ -13,13 +13,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-.modal-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-.modal-buttons.flowise {
-  grid-template-columns: 1fr;
-}
