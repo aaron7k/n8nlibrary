@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { Download, Copy, Link, X, Play } from 'lucide-react';
+import { Download, Copy, Link, X, Play, SortAsc, SortDesc } from 'lucide-react';
 import { Workflow, VoiceAgent, LibraryType } from './types';
 
 Modal.setAppElement('#root');
@@ -17,13 +17,15 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeLibrary, setActiveLibrary] = useState<LibraryType>('n8n');
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const response = await axios.post('https://flows.axelriveroc.com/webhook/n8nlibrary/get', {
-          type: activeLibrary
+          type: activeLibrary,
+          sort: sortOrder
         });
         
         if (response.data && Array.isArray(response.data.data)) {
@@ -44,7 +46,7 @@ const App = () => {
     };
 
     fetchData();
-  }, [activeLibrary]);
+  }, [activeLibrary, sortOrder]);
 
   const handleWorkflowClick = (workflow: Workflow) => {
     setSelectedItem(workflow);
@@ -108,6 +110,17 @@ const App = () => {
     setZoomedImage(null);
   };
 
+  const toggleSort = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
+
+  const renderEmptyState = () => (
+    <div className="flex flex-col items-center justify-center py-12">
+      <p className="text-2xl font-semibold text-gray-600">Templates Pronto</p>
+      <p className="text-gray-500 mt-2">Estamos trabajando en nuevos templates</p>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -133,6 +146,12 @@ const App = () => {
   }
 
   const renderContent = () => {
+    const currentData = activeLibrary === 'retell' ? voiceAgents : workflows;
+
+    if (!currentData || currentData.length === 0) {
+      return renderEmptyState();
+    }
+
     if (activeLibrary === 'retell') {
       return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,7 +255,16 @@ const App = () => {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">Infragrowth Library</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Infragrowth Library</h1>
+            <button
+              onClick={toggleSort}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            >
+              {sortOrder === 'asc' ? <SortAsc size={20} /> : <SortDesc size={20} />}
+              {sortOrder === 'asc' ? 'Más antiguos primero' : 'Más recientes primero'}
+            </button>
+          </div>
           <div className="flex justify-center space-x-4">
             <button
               className={`px-4 py-2 rounded-md transition-colors ${
