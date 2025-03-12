@@ -1,3 +1,8 @@
+export interface Archivo {
+  title: string;
+  path: string;
+}
+
 export interface Workflow {
   nombre: string;
   json: string;
@@ -6,7 +11,8 @@ export interface Workflow {
   loom: string | null;
   descripcion: string;
   fecha: string;
-  precio: number;
+  precio: number | null;
+  archivo?: Archivo[];
 }
 
 export interface VoiceAgent {
@@ -15,7 +21,7 @@ export interface VoiceAgent {
   loom: string | null;
   descripcion: string | null;
   fecha: string;
-  precio: number;
+  precio: number | null;
   url: string;
 }
 
