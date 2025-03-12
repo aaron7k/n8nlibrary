@@ -353,10 +353,12 @@ const App: React.FC = () => {
               <h3 className="text-lg font-semibold mb-2">Archivos Disponibles:</h3>
               {elementoSeleccionado.archivo.map((archivo, index) => (
                 <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
-                  <span className="text-gray-700">{index + 1}. {archivo.title}</span>
+                  <div className="flex-1 mr-8">
+                    <span className="text-gray-700">{index + 1}. {archivo.title}</span>
+                  </div>
                   <button
                     onClick={() => descargarArchivo(archivo.path, archivo.title)}
-                    className="flex items-center gap-2 bg-purple-600 text-white px-3 py-1 rounded-md hover:bg-purple-700 transition-colors"
+                    className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors whitespace-nowrap"
                   >
                     <Download size={16} />
                     Descargar
