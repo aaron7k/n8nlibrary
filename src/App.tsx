@@ -22,7 +22,7 @@ const App: React.FC = () => {
     const obtenerDatos = async () => {
       setCargando(true);
       try {
-        const respuesta = await fetch('https://flows.axelriveroc.com/webhook/n8nlibrary/get', {
+        const respuesta = await fetch('https://api.axelriveroc.com/webhook/n8nlibrary/get', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
